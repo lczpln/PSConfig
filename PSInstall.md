@@ -30,19 +30,26 @@ cd ~
 
 ## https://github.com/dahlbyk/posh-git
 
+```
 PowerShellGet\Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force
+```
 
 # Git PSReadLine
 
+```
 Install-Module PSReadLine
+```
 
 # Git PSReadLine Addon
 
+```
 powershell.exe -noni -nop -c "iwr -useb https://git.io/InstallPSReadlineAutocompleteBeta.ps1 | iex"
+```
 
 # Windows Terminal
-
+```
 https://www.microsoft.com/pt-br/p/windows-terminal/9n0dx20hk701?activetab=pivot:overviewtab
+```
 
 ## list
 ```js
