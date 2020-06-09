@@ -26,7 +26,7 @@ $GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Blue
 cd ~
 ```
 
-# Git Posh
+## Git Posh
 
 ## https://github.com/dahlbyk/posh-git
 
@@ -34,24 +34,24 @@ cd ~
 PowerShellGet\Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force
 ```
 
-# Git PSReadLine
+## Git PSReadLine
 
 ```
 Install-Module PSReadLine
 ```
 
-# Git PSReadLine Addon
+## Git PSReadLine Addon
 
 ```
 powershell.exe -noni -nop -c "iwr -useb https://git.io/InstallPSReadlineAutocompleteBeta.ps1 | iex"
 ```
 
-# Windows Terminal
+## Windows Terminal
 ```
 https://www.microsoft.com/pt-br/p/windows-terminal/9n0dx20hk701?activetab=pivot:overviewtab
 ```
 
-## list
+### list
 ```js
 "list": [
   {
@@ -66,7 +66,7 @@ https://www.microsoft.com/pt-br/p/windows-terminal/9n0dx20hk701?activetab=pivot:
 ...
 ]
 ```
-## scheme
+### scheme
 ```js
 "schemes": [
   {
