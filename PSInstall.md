@@ -28,7 +28,9 @@ cd ~
 
 ## Git Posh
 
-## https://github.com/dahlbyk/posh-git
+https://github.com/dahlbyk/posh-git
+
+install with this command line:
 
 ```
 PowerShellGet\Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force
