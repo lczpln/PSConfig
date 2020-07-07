@@ -1,6 +1,6 @@
 # Powershell configs:
 
-First type ``notepad $Profile.CurrentUserAllHosts`` to open config list
+First open powershell and type ``notepad $Profile.CurrentUserAllHosts`` to open config list
 
 #### Default dracula
 ```js
@@ -105,10 +105,15 @@ PowerShellGet\Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force
 Install-Module PSReadLine
 ```
 
-## Git PSReadLine Addon
+## Git PSReadLine Addon (Autocomplete addon)
 
 ```
 powershell.exe -noni -nop -c "iwr -useb https://git.io/InstallPSReadlineAutocompleteBeta.ps1 | iex"
+```
+
+## Font - Fira code
+```
+https://github.com/tonsky/FiraCode/wiki/Installing
 ```
 
 ## Windows Terminal
@@ -116,7 +121,7 @@ powershell.exe -noni -nop -c "iwr -useb https://git.io/InstallPSReadlineAutocomp
 https://www.microsoft.com/pt-br/p/windows-terminal/9n0dx20hk701?activetab=pivot:overviewtab
 ```
 
-### list
+### list (in windows terminal config)
 ```js
 "list": [
   {
