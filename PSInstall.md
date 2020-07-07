@@ -2,6 +2,7 @@
 
 First type ``notepad $Profile.CurrentUserAllHosts`` to open config list
 
+### Default dracula
 ```js
 Set-PSReadlineOption -Color @{
 "Command" = [ConsoleColor]::Green
@@ -24,6 +25,67 @@ $GitPromptSettings.BeforeStatus.ForegroundColor = [ConsoleColor]::Blue
 $GitPromptSettings.BranchColor.ForegroundColor = [ConsoleColor]::Blue
 $GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Blue
 cd ~
+```
+
+### Spaceship zsh
+```js
+Set-PSReadlineOption -Color @{
+    "Command" = [ConsoleColor]::Green
+    "Parameter" = [ConsoleColor]::Gray
+    "Operator" = [ConsoleColor]::Magenta
+    "Variable" = [ConsoleColor]::White
+    "String" = [ConsoleColor]::Yellow
+    "Number" = [ConsoleColor]::Blue
+    "Type" = [ConsoleColor]::Cyan
+    "Comment" = [ConsoleColor]::DarkCyan
+}
+
+function prompt {
+  $username=( ( Get-WMIObject -class Win32_ComputerSystem | Select-Object -ExpandProperty username ) -split '\\' )[1]
+  $currentPathAndGitSeparator = "$(if(git rev-parse --git-dir 2> $null) {" on "})"
+  $gitWasModified = if(git rev-parse --git-dir 2> $null) {
+    if(git diff --staged --name-only){
+      " [+]"
+    } 
+    elseif(git status --porcelain |Where {$_ -notmatch '^\?\?'}) {
+      " [!]"
+    }
+    else {
+      ""
+    }
+  }
+  $gitWasModifiedColor = if(git diff --staged --name-only){
+    "Green"
+  } 
+  elseif(git status --porcelain |Where {$_ -notmatch '^\?\?'}) {
+    "Red"
+  }
+  else {
+    "White"
+  }
+  $git = "$(if(git rev-parse --git-dir 2> $null) {" $(git branch --show-current)"})"
+  $prefix = "`n❯"
+
+  $dirSep = [IO.Path]::DirectorySeparatorChar
+    $pathComponents = $PWD.Path.Split($dirSep)
+    $displayPath = if ($pathComponents.Count -le 3) {
+      $PWD.Path
+    } else {
+      '…{0}{1}' -f $dirSep, ($pathComponents[-2,-1] -join $dirSep)
+    }
+
+Write-Host "$($username)" -NoNewline -ForegroundColor "Yellow"
+Write-Host " in " -NoNewline
+Write-Host "$($displayPath)" -NoNewline -ForegroundColor "Cyan"
+Write-Host "$($currentPathAndGitSeparator)" -NoNewline
+Write-Host "$($git)" -NoNewline -ForegroundColor "Magenta"
+Write-Host "$($gitWasModified)" -NoNewline -ForegroundColor "$($gitWasModifiedColor)"
+Write-Host "$($prefix)" -NoNewline -ForegroundColor "Green"
+return " "
+}
+
+Import-Module posh-git
+Import-Module PSReadLine
 ```
 
 ## Git Posh
