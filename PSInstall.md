@@ -2,7 +2,7 @@
 
 First type ``notepad $Profile.CurrentUserAllHosts`` to open config list
 
-### Default dracula
+#### Default dracula
 ```js
 Set-PSReadlineOption -Color @{
 "Command" = [ConsoleColor]::Green
@@ -27,7 +27,7 @@ $GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Blue
 cd ~
 ```
 
-### Spaceship zsh
+#### or Spaceship zsh
 ```js
 Set-PSReadlineOption -Color @{
     "Command" = [ConsoleColor]::Green
@@ -87,6 +87,7 @@ return " "
 Import-Module posh-git
 Import-Module PSReadLine
 ```
+![alt text](https://i.ibb.co/7v8VQDm/image.png)
 
 ## Git Posh
 
