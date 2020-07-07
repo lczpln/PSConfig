@@ -29,7 +29,6 @@ $GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Blue
 
 #### or Spaceship zsh
 ```js
-# Dracula readline configuration. Requires version 2.0, if you have 1.2 convert to `Set-PSReadlineOption -TokenType`
 Set-PSReadlineOption -Color @{
     "Command" = [ConsoleColor]::Green
     "Parameter" = [ConsoleColor]::Gray
@@ -42,36 +41,54 @@ Set-PSReadlineOption -Color @{
 }
 
 function prompt {
-    $username=( ( Get-WMIObject -class Win32_ComputerSystem | Select-Object -ExpandProperty username ) -split '\\' )[1]
+    $username = ((Get-WMIObject -class Win32_ComputerSystem | Select-Object -ExpandProperty username) -split '\\')[1]
+
+    $isAGitDir = if((Get-GitStatus)) {$true} else {$false}
+    $gitHasFileChanged = if((Get-GitStatus).Working) {$true} else {$false}
+    $gitHasFileToBeCommited = if((Get-GitStatus).HasIndex) {$true} else {$false}
+
+    $gitBranchName = (Get-GitStatus).Branch
+    $gitBranchDecorator = ""
+
+    $promptSuffix = "❯"
+
+    $gitSymbolCharacter = if($isAGitDir) {
+      if(($gitHasFileChanged) -and (-Not $gitHasFileToBeCommited)) {
+        " [!]"
+      } elseif($gitHasFileToBeCommited) {
+        " [+]"
+      } else {
+        ""
+      }
+    }
+
+    $gitSymbolColor = if(($gitHasFileChanged) -and (-Not $gitHasFileToBeCommited)) {
+      "Red"
+    } elseif($gitHasFileToBeCommited) {
+      "Green"
+    } else {
+      "White"
+    }
+
+     $gitBranchPrompt = if($isAGitDir) {
+      "$($gitBranchDecorator) $($gitBranchName)"
+    }
 
     $dirSep = "$pwd".Split('\')
     $displayPath = $dirSep[$dirSep.Count - 2], $dirSep[$dirSep.Count - 1] -join "\"
 
-    $prompt = Write-Prompt "$($username)" -ForegroundColor ([ConsoleColor]::Yellow)
-    $prompt += Write-Prompt " in " -ForegroundColor ([ConsoleColor]::White)
-    $prompt += Write-Prompt "$($displayPath)" -ForegroundColor ([ConsoleColor]::Cyan)
-    $prompt += & $GitPromptScriptBlock
+    $prompt = Write-Host "$($username)" -NoNewline -ForegroundColor ([ConsoleColor]::Yellow)
+    $prompt += Write-Host " in " -NoNewline -ForegroundColor ([ConsoleColor]::White)
+    $prompt += Write-Host "$($displayPath)" -NoNewline -ForegroundColor ([ConsoleColor]::Cyan)
+    $prompt += Write-Host "$(if($isAGitDir) {" on "})" -NoNewline -ForegroundColor ([ConsoleColor]::White)
+    $prompt += Write-Host "$($gitBranchPrompt)" -NoNewline -ForegroundColor ([ConsoleColor]::Magenta)
+    $prompt += Write-Host "$($gitSymbolCharacter)" -NoNewline -ForegroundColor "$($gitSymbolColor)"
+    $prompt += Write-Host "`n$($promptSuffix)" -NoNewline -ForegroundColor ([ConsoleColor]::Green)
     if ($prompt) { "$prompt " } else { " " }
 }
 
 Import-Module posh-git
 Import-Module PSReadLine
-
-$GitPromptSettings.DefaultPromptPrefix.Text = ""
-$GitPromptSettings.PathStatusSeparator.Text = " on "
-$GitPromptSettings.BeforeStatus.Text = " "
-$GitPromptSettings.AfterStatus.Text = ""
-$GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::White
-$GitPromptSettings.DefaultPromptPath.Text = ""
-$GitPromptSettings.DefaultPromptPath.ForegroundColor =[ConsoleColor]::Cyan
-$GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
-$GitPromptSettings.DefaultPromptSuffix.Text = "❯" # chevron unicode symbol
-$GitPromptSettings.DefaultPromptSuffix.ForegroundColor = [ConsoleColor]::Green
-# Dracula Git Status Configuration
-$GitPromptSettings.BeforeStatus.ForegroundColor = [ConsoleColor]::Magenta
-$GitPromptSettings.BranchColor.ForegroundColor = [ConsoleColor]::Magenta
-$GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Magenta
-
 ```
 ![alt text](https://i.ibb.co/7v8VQDm/image.png)
 
