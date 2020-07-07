@@ -24,8 +24,8 @@ $GitPromptSettings.DefaultPromptSuffix.ForegroundColor = [ConsoleColor]::Magenta
 $GitPromptSettings.BeforeStatus.ForegroundColor = [ConsoleColor]::Blue
 $GitPromptSettings.BranchColor.ForegroundColor = [ConsoleColor]::Blue
 $GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Blue
-cd ~
 ```
+![alt text](https://ibb.co/3MNxNjr)
 
 #### or Spaceship zsh
 ```js
