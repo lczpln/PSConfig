@@ -29,6 +29,7 @@ $GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Blue
 
 #### or Spaceship zsh
 ```js
+# Dracula readline configuration. Requires version 2.0, if you have 1.2 convert to `Set-PSReadlineOption -TokenType`
 Set-PSReadlineOption -Color @{
     "Command" = [ConsoleColor]::Green
     "Parameter" = [ConsoleColor]::Gray
@@ -41,51 +42,36 @@ Set-PSReadlineOption -Color @{
 }
 
 function prompt {
-  $username=( ( Get-WMIObject -class Win32_ComputerSystem | Select-Object -ExpandProperty username ) -split '\\' )[1]
-  $currentPathAndGitSeparator = "$(if(git rev-parse --git-dir 2> $null) {" on "})"
-  $gitWasModified = if(git rev-parse --git-dir 2> $null) {
-    if(git diff --staged --name-only){
-      " [+]"
-    } 
-    elseif(git status --porcelain |Where {$_ -notmatch '^\?\?'}) {
-      " [!]"
-    }
-    else {
-      ""
-    }
-  }
-  $gitWasModifiedColor = if(git diff --staged --name-only){
-    "Green"
-  } 
-  elseif(git status --porcelain |Where {$_ -notmatch '^\?\?'}) {
-    "Red"
-  }
-  else {
-    "White"
-  }
-  $git = "$(if(git rev-parse --git-dir 2> $null) {" $(git branch --show-current)"})"
-  $prefix = "`n❯"
+    $username=( ( Get-WMIObject -class Win32_ComputerSystem | Select-Object -ExpandProperty username ) -split '\\' )[1]
 
-  $dirSep = [IO.Path]::DirectorySeparatorChar
-    $pathComponents = $PWD.Path.Split($dirSep)
-    $displayPath = if ($pathComponents.Count -le 3) {
-      $PWD.Path
-    } else {
-      '…{0}{1}' -f $dirSep, ($pathComponents[-2,-1] -join $dirSep)
-    }
+    $dirSep = "$pwd".Split('\')
+    $displayPath = $dirSep[$dirSep.Count - 2], $dirSep[$dirSep.Count - 1] -join "\"
 
-Write-Host "$($username)" -NoNewline -ForegroundColor "Yellow"
-Write-Host " in " -NoNewline
-Write-Host "$($displayPath)" -NoNewline -ForegroundColor "Cyan"
-Write-Host "$($currentPathAndGitSeparator)" -NoNewline
-Write-Host "$($git)" -NoNewline -ForegroundColor "Magenta"
-Write-Host "$($gitWasModified)" -NoNewline -ForegroundColor "$($gitWasModifiedColor)"
-Write-Host "$($prefix)" -NoNewline -ForegroundColor "Green"
-return " "
+    $prompt = Write-Prompt "$($username)" -ForegroundColor ([ConsoleColor]::Yellow)
+    $prompt += Write-Prompt " in " -ForegroundColor ([ConsoleColor]::White)
+    $prompt += Write-Prompt "$($displayPath)" -ForegroundColor ([ConsoleColor]::Cyan)
+    $prompt += & $GitPromptScriptBlock
+    if ($prompt) { "$prompt " } else { " " }
 }
 
 Import-Module posh-git
 Import-Module PSReadLine
+
+$GitPromptSettings.DefaultPromptPrefix.Text = ""
+$GitPromptSettings.PathStatusSeparator.Text = " on "
+$GitPromptSettings.BeforeStatus.Text = " "
+$GitPromptSettings.AfterStatus.Text = ""
+$GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::White
+$GitPromptSettings.DefaultPromptPath.Text = ""
+$GitPromptSettings.DefaultPromptPath.ForegroundColor =[ConsoleColor]::Cyan
+$GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
+$GitPromptSettings.DefaultPromptSuffix.Text = "❯" # chevron unicode symbol
+$GitPromptSettings.DefaultPromptSuffix.ForegroundColor = [ConsoleColor]::Green
+# Dracula Git Status Configuration
+$GitPromptSettings.BeforeStatus.ForegroundColor = [ConsoleColor]::Magenta
+$GitPromptSettings.BranchColor.ForegroundColor = [ConsoleColor]::Magenta
+$GitPromptSettings.AfterStatus.ForegroundColor = [ConsoleColor]::Magenta
+
 ```
 ![alt text](https://i.ibb.co/7v8VQDm/image.png)
 
